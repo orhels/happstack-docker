@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+    web:
+        restart: "always"
+        build: "./web"
+        expose:
+            - "8000"
+        depends_on:
+            - postgres
+        volumes: 
+            - ./web:/usr/app
+            - static-media:/happstack-docker/static
+            - static-media:/happstack-docker/media
+
+    nginx:
+        restart: "always"
+        build: ./nginx
+        ports:
+            - "80:80"
+        volumes:
+            - static-media:/happstack-docker/static
+            - static-media:/happstack-docker/media
+    # PostgreSql service
+    postgres:
+        restart: "always"
+        image: postgres:latest
+        volumes:
+          - pgvolume:/var/lib/postgresql/data
+        ports:
+          - "5432:5432"
+        environment:
+            POSTGRES_PASSWORD: "happstack-docker"
+            POSTGRES_USER: "admin"
+            POSTGRES_DB: "happstack-docker"
+
+
+volumes:
+    # Static and media files
+    static-media:
+    # The database
+    pgvolume:
